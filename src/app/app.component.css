@@ -1,0 +1,48 @@
+md-toolbar.header-toolbar {
+    background-color: #e5f2fe;
+    padding: 0;
+
+}
+span {
+    padding: 0 12px;
+}
+span.timer {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+span.example-spacer {
+    flex: 1 1 auto;
+}
+
+
+md-list {
+    padding: 0;
+}
+
+md-list-item.current {
+    background-color: #688fed;
+    color: #ffffff;
+}
+
+md-card {
+    align-self: baseline;
+    margin: 12px 17px 0 17px;
+    padding: 0;
+    background-color: #ffffff;
+}
+
+md-toolbar-row.second-row {
+    background-color: #ffffff;
+    padding: 0 12px;
+    height: 90px;
+}
+
+button.fab.active {
+    background-color: #0f9603;
+}
+button.fab {
+    background-color: #b91115;
+}
+
+
