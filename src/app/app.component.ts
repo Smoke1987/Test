@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Rx';
 
-/// Для таблицы md-table из примера с сайта https://material.angular.io/components/table/overview
+/// пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ md-table пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ https://material.angular.io/components/table/overview
 import { DataSource } from '@angular/cdk';
 import { MdSort } from '@angular/material';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -48,30 +48,31 @@ export class AppComponent {
         {id: 3, name: 'debug', time: 0}
     ];
 
-    currentProject: ProjectInterface;
-    currentProjectId: number;
-    currentTask: TaskInterface;
-    currentTaskId: number;
+    currentProject:ProjectInterface;
+    currentProjectId:number;
+    currentTask:TaskInterface;
+    currentTaskId:number;
 
     ticks = 0;
     checkTime = false;
     alwaysCheckTime = false;
 
-
-    /// Для таблицы md-table из примера с сайта https://material.angular.io/components/table/overview
-    /// Не работает при подключении сортировки
-    /// @ViewChild(MdSort) sort: MdSort; -> console.log({SORT:this.sort}); .:: SORT: undefined ::.
+    /// @ViewChild(MdSort)
     displayedColumns = ['name', 'time'];
+    headers = ['РџСЂРѕРµРєС‚', 'Р—Р°РґР°С‡Р°', 'Р—Р°РґР°С‡Р°'];
     exampleDatabase:any;
-    dataSource1:any;
-    dataSource2:any;
-    dataSource3:any;
-    @ViewChild(MdSort) sort: MdSort;
+    dataSource:any;
+
+    section = 0;
+
+
+    @ViewChild(MdSort) sort:MdSort;
 
     ngOnInit() {
-        // Создадим дата-сет с проектами
+        this.setCurrentProject(1);
+        this.setCurrentTask(1);
         this.exampleDatabase = new ExampleDatabase(this.projects);
-        this.dataSource1 = new ExampleDataSource(this.exampleDatabase, this.sort);
+        this.dataSource = new ExampleDataSource(this.exampleDatabase, this.sort);
     }
 
     constructor() {
@@ -79,7 +80,7 @@ export class AppComponent {
 
         timer.subscribe((t:any) => {
             this.ticks = t;
-            if(this.checkTime || this.alwaysCheckTime) {
+            if (this.checkTime || this.alwaysCheckTime) {
                 let _project = this.projects.find((project:any)=> project.id == this.currentProjectId);
                 let _task = this.tasks.find((task:any)=> task.id == this.currentTaskId);
                 _project[_task.name]++;
@@ -101,27 +102,50 @@ export class AppComponent {
     }
 
     reloadData(event:any) {
-        // Создадим дата-сет с проектами
-        if(event.index != null){
-            switch(event.index) {
-                case 0: this.exampleDatabase = new ExampleDatabase(this.projects);this.dataSource1 = new ExampleDataSource(this.exampleDatabase, this.sort);break;
-                case 1: this.exampleDatabase = new ExampleDatabase(this.tasks);this.dataSource2 = new ExampleDataSource(this.exampleDatabase, this.sort);break;
-                case 2: this.exampleDatabase = new ExampleDatabase(this.tasks);this.dataSource3 = new ExampleDataSource(this.exampleDatabase, this.sort);break;
+        if (event.index != null) {
+            this.section = event.index;
+            switch (event.index) {
+                case 0:
+                    this.exampleDatabase = new ExampleDatabase(this.projects);
+                    break;
+                case 1:
+                    this.exampleDatabase = new ExampleDatabase(this.tasks);
+                    break;
+                case 2:
+                    this.exampleDatabase = new ExampleDatabase(this.tasks);
+                    break;
             }
-
+            this.dataSource = new ExampleDataSource(this.exampleDatabase, this.sort);
         }
     }
+
+    getTime(row:any, id: number) {
+        switch (id) {
+            case 0:
+                return row.coding + row.build + row.debug;
+            case 1:
+                return this.currentProject[row.name];
+            case 2:
+                return row.time;
+        }
+    }
+
 }
 
 //** An example database that the data source uses to retrieve data for the table.
 export class ExampleDatabase {
     //** Stream that emits whenever the data has been modified.
-    dataChange: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-    get data(): any[] { return this.dataChange.value; }
+    dataChange:BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
 
-    constructor(array: any[]) {
+    get data():any[] {
+        return this.dataChange.value;
+    }
+
+    constructor(array:any[]) {
         // Fill up the database with 100 users.
-        for (let i = 0; i < array.length; i++) { this.addItem(array[i]); }
+        for (let i = 0; i < array.length; i++) {
+            this.addItem(array[i]);
+        }
     }
 
     //** Adds a new user to the database.
@@ -138,14 +162,14 @@ export class ExampleDatabase {
  * to a common data base, ExampleDatabase. It is not the data source's responsibility to manage
  * the underlying data. Instead, it only needs to take the data and send the table exactly what
  * should be rendered.
-*/
+ */
 export class ExampleDataSource extends DataSource<any> {
-    constructor(private _exampleDatabase: ExampleDatabase, private _sort: MdSort) {
+    constructor(private _exampleDatabase:ExampleDatabase, private _sort:MdSort) {
         super();
     }
 
     //** Connect function called by the table to retrieve one stream containing the data to render.
-    connect(): Observable<any[]> {
+    connect():Observable<any[]> {
         const displayDataChanges = [
             this._exampleDatabase.dataChange,
             this._sort.mdSortChange,
@@ -156,20 +180,27 @@ export class ExampleDataSource extends DataSource<any> {
         });
     }
 
-    disconnect() {}
+    disconnect() {
+    }
 
     //** Returns a sorted copy of the database data.
-    getSortedData(): any[] {
+    getSortedData():any[] {
         const data = this._exampleDatabase.data.slice();
-        if (!this._sort.active || this._sort.direction == '') { return data; }
+        if (!this._sort.active || this._sort.direction == '') {
+            return data;
+        }
 
         return data.sort((a, b) => {
-            let propertyA: number|string = '';
-            let propertyB: number|string = '';
+            let propertyA:number|string = '';
+            let propertyB:number|string = '';
 
             switch (this._sort.active) {
-                case 'time': [propertyA, propertyB] = [a.coding + a.build + a.debug, b.coding + b.build + b.debug]; break;
-                case 'name': [propertyA, propertyB] = [a.name, b.name]; break;
+                case 'time':
+                    [propertyA, propertyB] = [a.coding + a.build + a.debug, b.coding + b.build + b.debug];
+                    break;
+                case 'name':
+                    [propertyA, propertyB] = [a.name, b.name];
+                    break;
             }
 
             let valueA = isNaN(+propertyA) ? propertyA : +propertyA;
@@ -179,4 +210,4 @@ export class ExampleDataSource extends DataSource<any> {
         });
     }
 }
- //*/
+//*/

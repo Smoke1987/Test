@@ -42,64 +42,36 @@
     <md-tab-group disableRipple="true" color="white" (selectChange)="reloadData($event)">
 
         <md-tab label="List By Project">
-            <md-table #table [dataSource]="dataSource1" mdSort>
-                <!-- NAME Column -->
-                <ng-container cdkColumnDef="name">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Проект </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
-                </ng-container>
 
-                <!-- TIME Column -->
-                <ng-container cdkColumnDef="time">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Время </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{row.coding + row.build + row.debug}} </md-cell>
-                </ng-container>
-
-                <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-                <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-            </md-table>
         </md-tab>
 
 
         <md-tab label="List By Task (currentProject)">
-            <md-table #table [dataSource]="dataSource2" mdSort>
-                <!-- NAME Column -->
-                <ng-container cdkColumnDef="name">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Задача </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
-                </ng-container>
 
-                <!-- TIME Column -->
-                <ng-container cdkColumnDef="time">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Время </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{currentProject[row.name]}} </md-cell>
-                </ng-container>
-
-                <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-                <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-            </md-table>
         </md-tab>
 
 
         <md-tab label="List By Task (Total task time)">
-            <md-table #table [dataSource]="dataSource3" mdSort>
-                <!-- NAME Column -->
-                <ng-container cdkColumnDef="name">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Задача </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
-                </ng-container>
 
-                <!-- TIME Column -->
-                <ng-container cdkColumnDef="time">
-                    <md-header-cell *cdkHeaderCellDef md-sort-header> Время </md-header-cell>
-                    <md-cell *cdkCellDef="let row"> {{row.time}} </md-cell>
-                </ng-container>
-
-                <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
-                <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
-            </md-table>
         </md-tab>
     </md-tab-group>
+
+    <md-table #table [dataSource]="dataSource" mdSort>
+        <!-- NAME Column -->
+        <ng-container cdkColumnDef="name">
+            <md-header-cell *cdkHeaderCellDef md-sort-header> {{headers[section]}} </md-header-cell>
+            <md-cell *cdkCellDef="let row"> {{row.name}} </md-cell>
+        </ng-container>
+
+        <!-- TIME Column -->
+        <ng-container cdkColumnDef="time">
+            <md-header-cell *cdkHeaderCellDef md-sort-header> Время </md-header-cell>
+            <md-cell *cdkCellDef="let row"> {{getTime(row, section)}} </md-cell>
+        </ng-container>
+
+        <md-header-row *cdkHeaderRowDef="displayedColumns"></md-header-row>
+        <md-row *cdkRowDef="let row; columns: displayedColumns;"></md-row>
+    </md-table>
 
 </md-sidenav-container>
 
